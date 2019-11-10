@@ -1,4 +1,5 @@
 require_relative './cell'
+require 'set'
 
 class GameOfLife
   attr_reader :live_cells
@@ -8,13 +9,24 @@ class GameOfLife
   end
 
   def tick
-    new_generation = live_cells.map do |cell|
-      num_neighbours = count_living_neighbours(cell)
-      new_state = Cell.next_state(current_state: Cell::ALIVE,
-                                  neighbours: num_neighbours)
+    transpose_living_cells! if grid_range[:min] < 1
 
-      cell if new_state == Cell::ALIVE
-    end.compact
+    new_generation = []
+    interesting_cells = Set.new
+
+    live_cells.each do |cell|
+      interesting_cells << [cell.col, cell.row]
+      interesting_cells.merge(Cell.neighbours_of(cell))
+    end
+
+    interesting_cells.each do |coord|
+      cell = Cell.new(*coord)
+      living_neighbours = count_living_neighbours(cell)
+      new_state = Cell.next_state(current_state: cell_at(*coord),
+                                  neighbours: living_neighbours)
+
+      new_generation << cell if new_state == Cell::ALIVE
+    end
 
     @live_cells = new_generation
   end
@@ -37,9 +49,16 @@ class GameOfLife
   end
 
   def grid_range
-    live_cells.map(&:col).min
-    live_cells.map(&:col).max
-    live_cells.map(&:row).max
-    live_cells.map(&:row).min
+    {
+      min: [live_cells.map(&:col).min, live_cells.map(&:row).min].min,
+      max: [live_cells.map(&:col).max, live_cells.map(&:row).max].max
+    }
+  end
+
+  def transpose_living_cells!
+    @live_cells = live_cells.map do |cell|
+      cell.transpose!
+      cell
+    end
   end
 end

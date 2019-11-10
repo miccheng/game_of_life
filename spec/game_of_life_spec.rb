@@ -22,57 +22,58 @@ describe 'GameOfLife' do
   describe 'stable population' do
     it 'stays alive' do
       seed = [
-        Cell.new(0, 0),
-        Cell.new(1, 0),
-        Cell.new(1, 1)
+        Cell.new(1, 1),
+        Cell.new(2, 1),
+        Cell.new(2, 2)
       ]
       life = GameOfLife.new(seed)
       life.tick
 
-      expect(life.cell_at(1, 1)).to eq Cell::ALIVE
+      expect(life.cell_at(2, 2)).to eq Cell::ALIVE
     end
   end
 
   describe 'overpopulation' do
     it 'cell dies' do
       seed = [
-        Cell.new(0, 0),
-        Cell.new(1, 0),
-        Cell.new(2, 0),
-        Cell.new(0, 1),
-        Cell.new(1, 1)
+        Cell.new(1, 1),
+        Cell.new(2, 1),
+        Cell.new(3, 1),
+        Cell.new(3, 2),
+        Cell.new(2, 2)
       ]
       life = GameOfLife.new(seed)
       life.tick
 
-      expect(life.cell_at(1, 1)).to eq Cell::DEAD
+      expect(life.cell_at(2, 2)).to eq Cell::DEAD
     end
   end
 
   describe 'underpopulation' do
     it 'cell dies' do
       seed = [
-        Cell.new(0, 0),
-        Cell.new(1, 1)
+        Cell.new(1, 1),
+        Cell.new(2, 2)
       ]
       life = GameOfLife.new(seed)
       life.tick
 
-      expect(life.cell_at(1, 1)).to eq Cell::DEAD
+      expect(life.cell_at(2, 2)).to eq Cell::DEAD
     end
   end
 
-  xdescribe 'reproduction' do
+  describe 'reproduction' do
     it 'cell revives' do
+
       seed = [
-        Cell.new(0, 0),
-        Cell.new(1, 0),
-        Cell.new(2, 0)
+        Cell.new(1, 1),
+        Cell.new(2, 1),
+        Cell.new(3, 1)
       ]
       life = GameOfLife.new(seed)
       life.tick
 
-      expect(life.cell_at(1, 1)).to eq Cell::ALIVE
+      expect(life.cell_at(2, 2)).to eq Cell::ALIVE
     end
   end
 end
