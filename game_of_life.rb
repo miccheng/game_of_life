@@ -36,6 +36,15 @@ class GameOfLife
     cell.nil? ? Cell::DEAD : Cell::ALIVE
   end
 
+  def grid_range
+    {
+      min: [live_cells.map(&:col).min, live_cells.map(&:row).min].min,
+      max: [live_cells.map(&:col).max, live_cells.map(&:row).max].max,
+      max_rows: live_cells.map(&:row).max + 2,
+      max_cols: live_cells.map(&:col).max + 2
+    }
+  end
+
   private
 
   def count_living_neighbours(cell)
@@ -46,13 +55,6 @@ class GameOfLife
     end
 
     num_living
-  end
-
-  def grid_range
-    {
-      min: [live_cells.map(&:col).min, live_cells.map(&:row).min].min,
-      max: [live_cells.map(&:col).max, live_cells.map(&:row).max].max
-    }
   end
 
   def transpose_living_cells!
